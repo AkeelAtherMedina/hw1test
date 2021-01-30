@@ -1,0 +1,20 @@
+Correctness - checked by Travis,Weight,Most tests fail,More than 75% of the tests pass,
+Suppression Tests Pass for Array Based Images,5,0,1,
+Rotation Tests Pass for Array Based Images,10,0,1,
+Masking Tests Pass for Array Based Images,15,0,1,
+Suppression Tests Pass for Pointer Based Images,5,0,1,
+Rotation Tests Pass for Pointer Based Images,10,0,1,
+Masking Tests Pass for Pointer Based Images,15,0,1,
+,,,,
+Implementation - checked by instructor,Weight,Implementation is incorrect or has many errors,Implementation is correct or has fewm minor errors,
+Array List is correctly implemented,20,0,1,
+Pointer List is correctly implemented,30,0,1,
+,,Additional features are not added or I do not find them cool.,Additional features are added and I find them cool.,
+Cool Image Operations,10 (bonus),0,1,
+,,,,
+,,,,
+Style - peer review,Weight,,,
+,,There are many issues,There are no or very few minor issues,There are no issues AND there are additional things to like.
+Code is well documented and readable,15,0,1,1.05
+,,The approaches seems largely inefficient.,The approaches are largely efficient.,The approaches have no possible room for improvement and demnstrate exceptinal style and efficiency.
+The problems are solved well,10,0,1,1.05
