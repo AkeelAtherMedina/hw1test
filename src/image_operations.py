@@ -1,4 +1,4 @@
-import MyImage
+from myimage import MyImage
 from copy import deepcopy
 
 
@@ -23,12 +23,12 @@ def remove_channel(src: MyImage, red: bool = False, green: bool = False,
             for j in range(src.height):
                 r, g, b = src.get(i, j)
                 newsrc.set(i, j, (0, g, b))
-    elif green == True:
+    if green == True:
         for i in range(src.width):
             for j in range(src.height):
                 r, g, b = src.get(i, j)
                 newsrc.set(i, j, (r, 0, b))
-    elif blue == True:
+    if blue == True:
         for i in range(src.width):
             for j in range(src.height):
                 r, g, b = src.get(i, j)
@@ -47,10 +47,11 @@ def rotations(src: MyImage) -> MyImage:
     Returns:
     an image twice the size of src and containing the 4 rotations of src.
     """
-    newsrc1 = deepcopy(src)
-    newsrc2 = deepcopy(src)
-    newsrc3 = deepcopy(src)
-    newsrc4 = deepcopy(src)
+    # my logic is to create 4 images and append them all together to one larger image
+    newsrc1 = deepcopy(src)  # sideways left
+    newsrc2 = deepcopy(src)  # original
+    newsrc3 = deepcopy(src)  # upside down
+    newsrc4 = deepcopy(src)  # sideways right
 
     i = 0
     j = 0
@@ -58,7 +59,7 @@ def rotations(src: MyImage) -> MyImage:
     while (i <= src.width):
         while (j <= src.height):
             r, g, b = src.get(j, i)
-            newsrc1.set(i, j, r, g, b)
+            newsrc1.set(i, j, (r, g, b))
             j += 1
         i += 1
 
@@ -68,7 +69,7 @@ def rotations(src: MyImage) -> MyImage:
     while (i >= 0):
         while (j >= 0):
             r, g, b = src.get(i, j)
-            newsrc3.set(i, j, r, g, b)
+            newsrc3.set(i, j, (r, g, b))
             j -= 1
         i -= 1
 
@@ -78,31 +79,32 @@ def rotations(src: MyImage) -> MyImage:
     while (i >= 0):
         while (j >= 0):
             r, g, b = src.get(j, i)
-            newsrc4.set(i, j, r, g, b)
+            newsrc4.set(i, j, (r, g, b))
             j -= 1
         i -= 1
 
+    # final image with 2 times the dimensions
     finalimg = MyImage((2*src.width, 2*src.height), False)
 
     for x in range(src.width):
         for y in range(src.height):
             r, g, b = newsrc1.get(x, y)
-            finalimg.set(x, y, r, g, b)
+            finalimg.set(x, y, (r, g, b))
 
     for x in range(src.width):
         for y in range(src.height):
             r, g, b = newsrc2.get(x, y)
-            finalimg.set(x+src.width, y, r, g, b)
+            finalimg.set(x+src.width, y, (r, g, b))
 
     for x in range(src.width):
         for y in range(src.height):
             r, g, b = newsrc3.get(x, y)
-            finalimg.set(x, y+src.height, r, g, b)
+            finalimg.set(x, y+src.height, (r, g, b))
 
     for x in range(src.width):
         for y in range(src.height):
             r, g, b = newsrc4.get(x, y)
-            finalimg.set(x+src.width, y+src.height, r, g, b)
+            finalimg.set(x+src.width, y+src.height, (r, g, b))
 
     return finalimg
 
@@ -123,4 +125,44 @@ def apply_mask(src: MyImage, maskfile: str, average: bool = True) -> MyImage:
     Returns:
     an image which the result of applying the specified mask to src.
     """
-    pass
+    file1 = open(maskfile, 'r')
+
+    n = file1.readline()
+    file1.seek(1)
+
+    mask = {}
+    masktotal = 0
+
+    for i in range(n):
+        for j in range(n):
+            temp = file1.readline()
+            mask[(i, j)] = temp
+            # dictionary to save mask value by index
+            masktotal += temp
+            # to use for final pixel value
+
+    file1.close()
+
+    newsrc = deepcopy(src)
+    mid = (n-1)/2
+    # distance between center and top and side of nxn matrix
+
+    for i in range(src.width):
+        for j in range(src.height):
+            sum = 0
+            k = i - mid
+            l = j - mid
+            # loop for the first position of matrix n if it is put ontop of pixel on image
+            for x in range(n):
+                for y in range(n):
+                    try:
+                        # try so that if the pixel is out of bounds i dont have to deal with it
+                        sum += mask[(x, y)] * ((src.get(k, l)[0] +
+                                                src.get(k, l)[1] + src.get(k, l)[2]) / 3)
+                        # i want to average the pixel values (assuming the index returns a part of the tuple)
+                    except:
+                        sum += 0
+                    l += 1
+                k += 1
+            sum = sum/masktotal
+            newsrc.set(i, j, (sum, sum, sum))
