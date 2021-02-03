@@ -119,3 +119,15 @@ class MyList:
         none
         '''
         self[i] = value
+
+
+class PointerList(MyList):
+
+    def __init__(self, size: int, value: (int, int, int)):
+        pass
+
+
+class ArrayList(MyList):
+
+    def __init__(self, size: int, value: (int, int, int)):
+        pass
