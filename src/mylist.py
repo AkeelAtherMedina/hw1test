@@ -34,7 +34,7 @@ class MyList:
         Returns:
         none
         """
-        pass
+        self.lst = ["dummy" for x in range(size)]
 
     def __len__(self) -> int:
         '''Returns the size of the list. Allows len() to be called on it.
@@ -46,7 +46,7 @@ class MyList:
         Returns:
         the size of the list.
         '''
-        pass
+        return len(self) #do i use metaclass? idk
 
     def __getitem__(self, i: int):
         '''Returns the value at index, i. Allows indexing syntax.
@@ -121,10 +121,29 @@ class MyList:
         self[i] = value
 
 
+class Node:
+    def __init__(self,value):
+        self.value = value
+        self.next = None #points to nothing
+
 class PointerList(MyList):
 
     def __init__(self, size: int, value: (int, int, int)):
-        pass
+        self.size = size
+        self.value = value
+        self.head = None 
+
+    def insert(self, value):
+        new_node = Node(value) #new node created
+        if self.head == None: #if the list is empty
+            self.head = new_node
+            current_node = self.head #head becomes current node 
+        
+        else:
+            while current_node != None: #iterates over the list till we reach the end 
+                current_node = current_node.next 
+            current_node.next = new_node
+
 
 
 class ArrayList(MyList):
