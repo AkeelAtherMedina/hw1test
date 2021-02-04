@@ -1,3 +1,6 @@
+import array as arr
+
+
 class MyListIterator:
     ''' Iterator class to make MyList iterable.
     https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
@@ -34,7 +37,8 @@ class MyList:
         Returns:
         none
         """
-        self.lst = ["dummy" for x in range(size)]
+        self.size = size
+        self.value = value
 
     def __len__(self) -> int:
         '''Returns the size of the list. Allows len() to be called on it.
@@ -46,7 +50,8 @@ class MyList:
         Returns:
         the size of the list.
         '''
-        return len(self) #do i use metaclass? idk
+        # return len(self)  # do i use metaclass? idk # len(self) isnt valid -akeel
+        pass
 
     def __getitem__(self, i: int):
         '''Returns the value at index, i. Allows indexing syntax.
@@ -122,31 +127,51 @@ class MyList:
 
 
 class Node:
-    def __init__(self,value):
+    def __init__(self, value):
         self.value = value
-        self.next = None #points to nothing
+        self.next = None  # points to nothing
+
 
 class PointerList(MyList):
 
     def __init__(self, size: int, value: (int, int, int)):
         self.size = size
         self.value = value
-        self.head = None 
+        self.head = None
 
     def insert(self, value):
-        new_node = Node(value) #new node created
-        if self.head == None: #if the list is empty
+        new_node = Node(value)  # new node created
+        if self.head == None:  # if the list is empty
             self.head = new_node
-            current_node = self.head #head becomes current node 
-        
-        else:
-            while current_node != None: #iterates over the list till we reach the end 
-                current_node = current_node.next 
-            current_node.next = new_node
+            current_node = self.head  # head becomes current node
 
+        else:
+            while current_node != None:  # iterates over the list till we reach the end
+                current_node = current_node.next
+            current_node.next = new_node
 
 
 class ArrayList(MyList):
 
-    def __init__(self, size: int, value: (int, int, int)):
-        pass
+    def __init__(self):
+        MyList.__init__(self, self.size)
+
+        temp = [self.value for i in range(self.size)]
+
+        self.r = arr.array('i', [])
+        self.r.extend(temp)
+        self.g = arr.array('i', [])
+        self.g.extend(temp)
+        self.b = arr.array('i', [])
+        self.b.extend(temp)
+
+    def __getitem__(self, i: int):
+        return (self.r[i], self.g[i], self.b[i])
+
+    def __setitem__(self, i: int, value) -> None:
+        self.r[i] = value[0]
+        self.g[i] = value[1]
+        self.b[i] = value[2]
+
+    def __len__(self):
+        return len(self.r)
