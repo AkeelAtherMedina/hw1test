@@ -134,9 +134,7 @@ class Node:
 
 class PointerList(MyList):
 
-    def __init__(self, size: int, value: (int, int, int)):
-        self.size = size
-        self.value = value
+    def __init__(self):
         self.head = None
 
     def insert(self, value):
