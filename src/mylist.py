@@ -151,8 +151,8 @@ class PointerList(MyList):
 
 class ArrayList(MyList):
 
-    def __init__(self):
-        MyList.__init__(self, self.size)
+    def __init__(self, size, values=None):
+        MyList.__init__(self, size, values)
 
         temp = [self.value for i in range(self.size)]
 
