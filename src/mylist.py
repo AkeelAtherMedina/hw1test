@@ -51,6 +51,7 @@ class MyList:
         the size of the list.
         '''
         # return len(self)  # do i use metaclass? idk # len(self) isnt valid -akeel
+        return self.size
         pass
 
     def __getitem__(self, i: int):
@@ -67,7 +68,7 @@ class MyList:
         # Ensure bounds.
         assert 0 <= i < len(self),\
             f'Getting invalid list index {i} from list of size {len(self)}'
-        pass
+        return self[i]
 
     def __setitem__(self, i: int, value) -> None:
         '''Sets the element at index, i, to value. Allows indexing syntax.
@@ -84,7 +85,7 @@ class MyList:
         # Ensure bounds.
         assert 0 <= i < len(self),\
             f'Setting invalid list index {i} in list of size {self.size()}'
-        pass
+        self[i] = value
 
     def __iter__(self) -> MyListIterator:
         '''Returns an iterator that allows iteration over this list.
@@ -125,34 +126,67 @@ class MyList:
         '''
         self[i] = value
 
-
 class Node:
-    def __init__(self, value):
+    def _init_(self, value):
         self.value = value
+        self.prev = None
         self.next = None  # points to nothing
-
-
+    
 class PointerList(MyList):
-
-    def __init__(self):
+    def _init_(self, size: int, value=None) -> None:
         self.head = None
+        self.tail = None
+        self.count = 0
 
-    def insert(self, value):
-        new_node = Node(value)  # new node created
-        if self.head == None:  # if the list is empty
-            self.head = new_node
-            current_node = self.head  # head becomes current node
+        # make a linked list since since the list is static and fill it with dummy values
+        if self.head == None: #if list is empty
+            self.head = Node(value)
+            current = self.head
+            current.next = self.tail
+            current.prev = None 
 
+        for x in range(1, self.size):
+            new_node = Node(("dummy", "dummy", "dummy"))
+            current.next = new_node
+            current = current.next
+            current.prev = current
+
+    def _len_(self) -> int:
+        return self.size # since the list is static, the length would be the size specified by the user
+    
+    def _getitem_(self, i: int):
+        current = self.head
+        if i > self.size:
+            return "Index out of range"
         else:
-            while current_node != None:  # iterates over the list till we reach the end
-                current_node = current_node.next
-            current_node.next = new_node
+            for x in range(self.size):
+                if x == i:
+                    return current.value
+                else:
+                    current = current.next
+                    current.prev = current
+
+    def _setitem_(self, i: int, value) -> None:
+        current = self.head
+        if i > self.size:
+            return "Index out of range"
+        else:
+            for x in range(self.size):
+                if x == i:
+                    current.value = value
+                else:
+                    current = current.next
+                    current.prev = current
 
 
 class ArrayList(MyList):
 
     def __init__(self, size, values=None):
         MyList.__init__(self, size, values)
+
+        # self.r = arr.array('i', [self.value for i in range(self.size)]) this works i checked it but idk
+        # self.g = arr.array('i', [self.value for i in range(self.size)])
+        # self.b = arr.array ('i', [self.value for i in range(self.size)])
 
         temp = [self.value for i in range(self.size)]
 
