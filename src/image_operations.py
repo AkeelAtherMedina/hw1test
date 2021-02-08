@@ -1,7 +1,6 @@
 from myimage import MyImage
 from mylist import *
 from PIL import Image
-from copy import deepcopy
 
 
 def remove_channel(src: MyImage, red: bool = False, green: bool = False,
@@ -19,28 +18,16 @@ def remove_channel(src: MyImage, red: bool = False, green: bool = False,
     Returns:
     a copy of src with the indicated channels suppressed.
     """
-    newsrc = deepcopy(src)
-    # if red == True or ((red == False) and (green == False) and (blue == False)):
-    #     for i in range(src.size[0]):
-    #         for j in range(src.size[1]):
-    #             r, g, b = src.get(i, j)
-    #             newsrc.set(i, j, (255, g, b))
-    # if green == True:
-    #     for i in range(src.size[0]):
-    #         for j in range(src.size[1]):
-    #             r, g, b = src.get(i, j)
-    #             newsrc.set(i, j, (r, 255, b))
-    # if blue == True:
-    #     for i in range(src.size[0]):
-    #         for j in range(src.size[1]):
-    #             r, g, b = src.get(i, j)
-    #             newsrc.set(i, j, (r, g, 255))
+    # 9 possible combinations of channels we can remove
+    newsrc = MyImage(((src.size)[0], (src.size)[1]))  # initialise copy of src
     if not (red == True and blue == True and green == True):
         if red == True:
             for i in range(src.size[0]):
                 for j in range(src.size[1]):
+                    # traverse through image and get every pixel
                     r, g, b = src.get(i, j)
                     if (green == False) and (blue == False):
+                        # our new image is the same as the src file, with red channel removed
                         newsrc.set(i, j, (0, g, b))
                     elif green == True and blue == False:
                         newsrc.set(i, j, (0, 0, b))
@@ -63,8 +50,9 @@ def remove_channel(src: MyImage, red: bool = False, green: bool = False,
             for i in range(src.size[0]):
                 for j in range(src.size[1]):
                     r, g, b = src.get(i, j)
+                    # when all are false, it is the same as red channel being removed
                     newsrc.set(i, j, (0, g, b))
-    else:
+    else:  # if red green and blue are all True, everything channel is removed
         for i in range(src.size[0]):
             for j in range(src.size[1]):
                 r, g, b = src.get(i, j)
@@ -84,48 +72,45 @@ def rotations(src: MyImage) -> MyImage:
     an image twice the size of src and containing the 4 rotations of src.
     """
     # my logic is to create 4 images and append them all together to one larger image
-    newsrc1 = MyImage((src.size[0], src.size[1]), False)  # sideways left
-    newsrc2 = deepcopy(src)  # original
-    newsrc3 = MyImage((src.size[0], src.size[1]), False)  # upside down
-    newsrc4 = MyImage((src.size[0], src.size[1]), False)  # sideways right
+    newsrc1 = MyImage((src.size[0], src.size[1]))  # sideways left
+    newsrc2 = MyImage((src.size[0], src.size[1]))  # original
+    newsrc3 = MyImage((src.size[0], src.size[1]))  # upside down
+    newsrc4 = MyImage((src.size[0], src.size[1]))  # sideways right
 
     for i in range(src.size[0]):
         for j in range(src.size[1]):
-            r, g, b = src.get(j, (src.size[0]-1)-i)
-            newsrc1.set(i, j, (r, g, b))
+            r, g, b = src.get(i, (src.size[0]-1)-j)  # sideways left
+            newsrc1.set(j, i, (r, g, b))
 
-    for i in range(src.size[0]):
-        for j in range(src.size[1]):
-            r, g, b = src.get((src.size[0]-1) - i, (src.size[0]-1)-j)
-            newsrc3.set(i, j, (r, g, b))
+            r, g, b = src.get(j, i)
+            newsrc2.set(j, i, (r, g, b))  # original
 
-    for i in range(src.size[0]):
-        for j in range(src.size[1]):
-            r, g, b = src.get((src.size[0]-1) - j, i)
-            newsrc4.set(i, j, (r, g, b))
+            r, g, b = src.get((src.size[0]-1) - j,
+                              (src.size[0]-1)-i)  # upside down
+            newsrc3.set(j, i, (r, g, b))
+
+            r, g, b = src.get((src.size[0]-1) - i, j)  # sideways right
+            newsrc4.set(j, i, (r, g, b))
 
     # final image with 2 times the dimensions
     finalimg = MyImage((2*src.size[0], 2*src.size[1]), False)
 
     for x in range(src.size[0]):
         for y in range(src.size[1]):
-            r, g, b = newsrc1.get(x, y)
-            finalimg.set(x, y, (r, g, b))
+            r, g, b = newsrc1.get(y, x)
+            finalimg.set(y, x, (r, g, b))  # starting point is 0,0
 
-    for x in range(src.size[0]):
-        for y in range(src.size[1]):
-            r, g, b = newsrc2.get(x, y)
-            finalimg.set(x, y+src.size[0], (r, g, b))
+            r, g, b = newsrc2.get(y, x)
+            # starting point is 0,src.size[0]
+            finalimg.set(y, x+src.size[0], (r, g, b))
 
-    for x in range(src.size[0]):
-        for y in range(src.size[1]):
-            r, g, b = newsrc3.get(x, y)
-            finalimg.set(x+src.size[0], y, (r, g, b))
+            r, g, b = newsrc3.get(y, x)
+            # starting point is src.size[0], 0
+            finalimg.set(y+src.size[0], x, (r, g, b))
 
-    for x in range(src.size[0]):
-        for y in range(src.size[1]):
-            r, g, b = newsrc4.get(x, y)
-            finalimg.set(x+src.size[0], y+src.size[1], (r, g, b))
+            r, g, b = newsrc4.get(y, x)
+            # starting point is src.size[0], src.size[1]
+            finalimg.set(y+src.size[0], x+src.size[1], (r, g, b))
 
     return finalimg
 
@@ -147,58 +132,68 @@ def apply_mask(src: MyImage, maskfile: str, average: bool = True) -> MyImage:
     an image which the result of applying the specified mask to src.
     """
     if src is not None:
-        file1 = open(maskfile, 'r')
-        # print(src.size[0])
-        n = int(file1.readline())
-        # file1.seek(1)
 
+        file1 = open(maskfile, 'r')
+        n = int(file1.readline())  # n^2 is the size of the mask
+
+        # I will store mask values in a dictionary to map the row and column.
         mask = {}
-        masktotal = 0
+        masktotal = 0  # if we need to average the mask, we must divide by the total mask weights applied to each pixel
 
         for i in range(n):
             for j in range(n):
                 temp = file1.readline()
                 try:
                     mask[(j, i)] = int(temp)
-                    # dictionary to save mask value by index
+                    # dictionary to save mask value by index, must be an integer
                 except:
                     pass
         file1.close()
-        newsrc = deepcopy(src)
+
+        newsrc = MyImage((src.size[0], src.size[1]))  # initialise new image
+
+        # distance between center pixel of image and top and side of nxn matrix
         mid = int((n-1)/2)
-        # distance between center and top and side of nxn matrix
+
         for j in range(int(src.size[0])):
             for i in range(int(src.size[1])):
-                sumo = 0
+
+                sumo = 0  # new pixel value after mask, sum of weights
                 # loop for the first position of matrix n if it is put ontop of pixel on image
-                l = j - mid
-                for x in range(n):
-                    k = i - mid
-                    for y in range(n):
-                        try:
+                l = j - mid  # the pixel index column iterating over the mask mapped ontop of the image pixel j,i
+                for x in range(n):  # iterating over the mask
+                    k = i - mid  # the pixel index row iterating over the mask mapped ontop of the image pixel j,i
+                    for y in range(n):  # iterating over the mask
+
+                        try:  # try so that if the pixel is out of bounds it isnt considered
                             r, g, b = src.get(k, l)
+                            # averaging of channels is always done, results in grayscale
                             rgb = ((r + g + b) // 3)
+                            # multiplying with relevant mask weights
                             temp = mask[(x, y)] * rgb
-                            # try so that if the pixel is out of bounds i dont have to deal with it
-                            # sum += (r + g + b) // 3
                             sumo += temp
                             masktotal += mask[(x, y)]
-                            if i == 10 and j == 10:
-                                print((x, y))
-                            # i want to average the pixel values (assuming the index returns a part of the tuple)
                         except:
                             pass
+
                         k += 1
                     l += 1
+
+                # we take average if bool passed is true, but we also cannot do zerodivision
                 if masktotal != 0 and average == True:
                     sumo = int(sumo/masktotal)
+
+                # this sum cannot be negative or over 255
                 if sumo < 0:
                     sumo = 0
                 elif sumo > 255:
                     sumo = 255
-                newsrc.set(i, j, (sumo, sumo, sumo))
+
+                newsrc.set(i, j, (sumo, sumo, sumo))  # apply sum to new images
+
+                # set masktotal and sum to 0 for next iteration
                 masktotal = 0
                 sumo = 0
         return newsrc
     else:
-        return
+        return  # in case there is no src image passed

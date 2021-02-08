@@ -1,4 +1,6 @@
 from PIL import Image
+from mylist import *
+import PIL
 
 
 class MyImage:
@@ -43,7 +45,7 @@ class MyImage:
             f"(r, c): ({r}, {c}) for image of size: {self.size}"
         return r*width + c
 
-    def open(path: str) -> MyImage:
+    def open(path: str, pointer: bool = False) -> 'MyImage':
         """Creates and returns an image containing from the information at file path.
 
         The image format is inferred from the file name. The read image is
@@ -56,8 +58,12 @@ class MyImage:
         the image created using the information from file path.
         """
         # Use PIL to read the image information and store it in our instance.
+
         img: PIL.Image = Image.open(path)
-        myimg: MyImage = MyImage(img.size)
+        if pointer:
+            myimg: MyImage = MyImage(img.size, True)
+        else:
+            myimg: MyImage = MyImage(img.size)
         width, height = img.size
         # Covert image to RGB. https://stackoverflow.com/a/11064935/1382487
         img: PIL.Image = img.convert('RGB')

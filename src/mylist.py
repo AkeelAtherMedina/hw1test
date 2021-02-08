@@ -127,13 +127,13 @@ class MyList:
 
 
 class Node:
-    def _init_(self, value):
+    def __init__(self, value):
         self.value = value
         self.next = None  # points to nothing
 
 
 class PointerList(MyList):
-    def _init_(self, size, value=None):
+    def __init__(self, size, value=None):
         MyList.__init__(self, size, value)
 
         self.head = None
@@ -141,18 +141,27 @@ class PointerList(MyList):
 
         # make a linked list since since the list is static and fill it with dummy values
         # if self.head == None:  # if list is empty
-        self.head = Node(value)
-        current = self.head
 
-        for x in range(int(self.size)):
-            current.next = Node(value)
-            current = current.next
+        if value is not None:
+            self.head = Node(value)
+            current = self.head
 
-    def _len_(self):
+            for x in range(int(self.size)):
+                current.next = Node(value)
+                current = current.next
+        else:
+            self.head = Node((None, None, None))
+            current = self.head
+
+            for x in range(int(self.size)):
+                current.next = Node((None, None, None))
+                current = current.next
+
+    def __len__(self):
         # since the list is static, the length would be the size specified by the user
         return self.size
 
-    def _getitem_(self, i: int):
+    def __getitem__(self, i: int):
         current = self.head
         if i > self.size:
             return "Index out of range"
@@ -164,7 +173,7 @@ class PointerList(MyList):
                     current = current.next
         return None
 
-    def _setitem_(self, i: int, value) -> None:
+    def __setitem__(self, i: int, value) -> None:
         current = self.head
         if i > self.size:
             return "Index out of range"
@@ -176,103 +185,73 @@ class PointerList(MyList):
                     current = current.next
 
 
-# class ArrayList(MyList):
-
-#     def __init__(self, size, value=None):
-#         MyList.__init__(self, size, value)
-
-#         self.r = arr.array('i', [])
-#         self.g = arr.array('i', [])
-#         self.b = arr.array('i', [])
-
-#         for i in range(self.size):
-#             self.r.extend(value)
-#             self.g.extend(value)
-#             self.b.extend(value)
-
-#     def __getitem__(self, i: int):
-#         assert 0 <= i < len(self),\
-#             f'Getting invalid list index {i} from list of size {len(self)}'
-#         return (self.r[i], self.g[i], self.b[i])
-
-#     def __setitem__(self, i: int, value) -> None:
-#         assert 0 <= i < len(self),\
-#             f'Setting invalid list index {i} in list of size {self.size()}'
-#         self.r[i] = value[0]
-#         self.g[i] = value[1]
-#         self.b[i] = value[2]
-
-#     def __len__(self):
-#         return len(self.r)
-# class ArrayList(MyList):
-
-#     def __init__(self, size, value=None):
-#         MyList.__init__(self, size, value)
-
-#         self.rgb = arr.array('I', [])
-
-#         for i in range(self.size):
-#             for j in range(3):
-#                 if value[j] < 10:
-#                     temp = "0"+"0"+str(value[j])
-#                     self.rgb.append(int(temp))
-#                 elif value[j] < 100:
-#                     temp = '0'+str(value[j])
-#                     self.rgb.append(int(temp))
-#                 elif value[j] < 1000:
-#                     self.rgb.append(int(str(value[j])))
-
-#     def __getitem__(self, i: int):
-
-#         assert 0 <= i < len(self),\
-#             f'Getting invalid list index {i} from list of size {len(self)}'
-
-#         temp = str(self.rgb[i])
-#         while len(temp) <= 9:
-#             temp = "0" + temp
-
-#         return (int(temp[0:3]), int(temp[3:6]), int(temp[6:9]))
-
-#     def __setitem__(self, i: int, value) -> None:
-
-#         assert 0 <= i < len(self),\
-#             f'Setting invalid list index {i} in list of size {self.size()}'
-
-#         a = str(value[0])
-#         while len(a) <= 3:
-#             a = "0" + a
-#         b = str(value[1])
-#         while len(b) <= 3:
-#             b = "0" + b
-#         c = str(value[2])
-#         while len(c) <= 3:
-#             c = "0" + c
-
-#         self.rgb[i] = int(a + b + c)
-
-#     def __len__(self):
-#         return len(self.rgb)
 class ArrayList(MyList):
 
     def __init__(self, size, value=None):
-        MyList.__init__(self, size, value)
+        """
+        Creates a list of the given size, optionally intializing elements to value.
 
-        self.rgb = arr.array('i', [])
+        The list is static. It only has space for size elements.
 
+        Args:
+        - size: size of the list; space is reserved for these many elements.
+        - value: the optional initial value of the created elements.
+
+        Returns:
+        none
+        """
+        MyList.__init__(self, size, value)  # initialise parent class
+
+        self.rgb = arr.array('i', [])  # empty array of integers
+
+        # we extend the array by 3 pixels, r, g, b, for every iteration.
+        # this means our array is overall length of 3*self.size
         if value is not None:
             for i in range(int(self.size)):
                 self.rgb.extend([value[0], value[1], value[2]])
         else:
             for i in range(int(self.size)):
+                # no value given so any integer can be used
                 self.rgb.extend([0, 0, 0])
 
     def __getitem__(self, i: int):
+        '''
+        Returns the value at index, i. 
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
+        # we can retrieve an array element by index, and we must return the rgb values in a tuple
+        # when we initialised the array, we gave 3 times the amount of entries than the size, so the ith element of the image is at 3*i for this implementation
         return (self.rgb[i*3], self.rgb[(i*3)+1], self.rgb[(i*3)+2])
 
     def __setitem__(self, i: int, value) -> None:
+        '''
+        Sets the element at index, i, to value. 
+
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
+        # when we initialised the array, we gave 3 times the amount of entries than the size, so the ith element of the image is at 3*i for this implementation
+        # the red, green and blue values are next to each other in index so we must add 1 to the index in this order
         self.rgb[(i*3)] = value[0]
         self.rgb[(i*3)+1] = value[1]
         self.rgb[(i*3)+2] = value[2]
 
-    def __len__(self):
+    def __len__(self) -> int:
+        '''
+        Returns the size of the list.
+
+        Args:
+
+        Returns:
+        the size of the list.
+        '''
         return self.size
