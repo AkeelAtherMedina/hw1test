@@ -66,7 +66,6 @@ class MyList:
         # Ensure bounds.
         assert 0 <= i < len(self),\
             f'Getting invalid list index {i} from list of size {len(self)}'
-        return self[i]
 
     def __setitem__(self, i: int, value) -> None:
         '''Sets the element at index, i, to value. Allows indexing syntax.
@@ -83,7 +82,6 @@ class MyList:
         # Ensure bounds.
         assert 0 <= i < len(self),\
             f'Setting invalid list index {i} in list of size {self.size()}'
-        self[i] = value
 
     def __iter__(self) -> MyListIterator:
         '''Returns an iterator that allows iteration over this list.
@@ -125,7 +123,7 @@ class MyList:
         self[i] = value
 
 
-class Node: #separate class for Node
+class Node:  # separate class for Node
     def __init__(self, value):
         self.value = value
         self.next = None  # points to nothing
@@ -133,20 +131,33 @@ class Node: #separate class for Node
 
 class PointerList(MyList):
     def __init__(self, size, value=None):
-        MyList.__init__(self, size, value)
+        """
+        Creates a list of the given size, optionally intializing elements to value.
 
-        self.head = None
-        self.count = 0
+        The list is static. It only has space for size elements.
+
+        Args:
+        - size: size of the list; space is reserved for these many elements.
+        - value: the optional initial value of the created elements.
+
+        Returns:
+        none
+        """
+        MyList.__init__(self, size, value)  # initialise parent class
+
+        self.head = None  # right now head points to nothing
+        self.count = 0  # counter value
 
         # make a linked list since since the list is static and fill it with values
         if value is not None:
-            self.head = Node(value)
-            current = self.head #current points to head node
+            self.head = Node(value)  # head points to the first node created
+            current = self.head  # current points to head node
 
             for x in range(int(self.size)):
                 current.next = Node(value)
+                # current node points to next node, creating a linked list of given size
                 current = current.next
-        else:
+        else:  # for when value is None, we need to input a tuple
             self.head = Node((None, None, None))
             current = self.head
 
@@ -155,28 +166,55 @@ class PointerList(MyList):
                 current = current.next
 
     def __len__(self):
+        '''
+        Returns the size of the list.
+
+        Args:
+
+        Returns:
+        the size of the list.
+        '''
         # since the list is static, the length would be the size specified by the user
         return self.size
 
     def __getitem__(self, i: int):
-        current = self.head #set current to the first node which is the head node 
-        if i > self.size: #index provided should not be greater than the size of the list
+        '''
+        Returns the value at index, i. 
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
+        current = self.head  # set current to the first node which is the head node
+        if i > self.size:  # index provided should not be greater than the size of the list
             return "Index out of range"
         else:
             for x in range(self.size):
-                if x == i:
+                if x == i:  # this is the implementation to make the linked list iterable, since it is static it will find the ith element specified
                     return current.value
                 else:
                     current = current.next
         return None
 
     def __setitem__(self, i: int, value) -> None:
-        current = self.head #set current to the first node which is the head node
-        if i > self.size: #index provided should not be greater than the size of the list
+        '''
+        Sets the element at index, i, to value. 
+
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
+        current = self.head  # set current to the first node which is the head node
+        if i > self.size:  # index provided should not be greater than the size of the list
             return "Index out of range"
         else:
             for x in range(self.size):
-                if x == i:
+                if x == i:  # same logic is for getitem, except we set the ith node value to value given.
                     current.value = value
                 else:
                     current = current.next
