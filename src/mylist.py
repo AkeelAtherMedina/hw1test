@@ -50,7 +50,6 @@ class MyList:
         Returns:
         the size of the list.
         '''
-        # return len(self)  # do i use metaclass? idk # len(self) isnt valid -akeel
         pass
 
     def __getitem__(self, i: int):
@@ -126,7 +125,7 @@ class MyList:
         self[i] = value
 
 
-class Node:
+class Node: #separate class for Node
     def __init__(self, value):
         self.value = value
         self.next = None  # points to nothing
@@ -139,12 +138,10 @@ class PointerList(MyList):
         self.head = None
         self.count = 0
 
-        # make a linked list since since the list is static and fill it with dummy values
-        # if self.head == None:  # if list is empty
-
+        # make a linked list since since the list is static and fill it with values
         if value is not None:
             self.head = Node(value)
-            current = self.head
+            current = self.head #current points to head node
 
             for x in range(int(self.size)):
                 current.next = Node(value)
@@ -162,8 +159,8 @@ class PointerList(MyList):
         return self.size
 
     def __getitem__(self, i: int):
-        current = self.head
-        if i > self.size:
+        current = self.head #set current to the first node which is the head node 
+        if i > self.size: #index provided should not be greater than the size of the list
             return "Index out of range"
         else:
             for x in range(self.size):
@@ -174,8 +171,8 @@ class PointerList(MyList):
         return None
 
     def __setitem__(self, i: int, value) -> None:
-        current = self.head
-        if i > self.size:
+        current = self.head #set current to the first node which is the head node
+        if i > self.size: #index provided should not be greater than the size of the list
             return "Index out of range"
         else:
             for x in range(self.size):
