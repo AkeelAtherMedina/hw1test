@@ -51,7 +51,6 @@ class MyList:
         the size of the list.
         '''
         # return len(self)  # do i use metaclass? idk # len(self) isnt valid -akeel
-        return self.size
         pass
 
     def __getitem__(self, i: int):
@@ -126,34 +125,33 @@ class MyList:
         '''
         self[i] = value
 
+
 class Node:
     def _init_(self, value):
         self.value = value
-        self.prev = None
         self.next = None  # points to nothing
-    
+
+
 class PointerList(MyList):
-    def _init_(self, size: int, value=None) -> None:
+    def _init_(self, size, value=None):
+        MyList.__init__(self, size, value)
+
         self.head = None
-        self.tail = None
         self.count = 0
 
         # make a linked list since since the list is static and fill it with dummy values
-        if self.head == None: #if list is empty
-            self.head = Node(value)
-            current = self.head
-            current.next = self.tail
-            current.prev = None 
+        # if self.head == None:  # if list is empty
+        self.head = Node(value)
+        current = self.head
 
-        for x in range(1, self.size):
-            new_node = Node(("dummy", "dummy", "dummy"))
-            current.next = new_node
+        for x in range(int(self.size)):
+            current.next = Node(value)
             current = current.next
-            current.prev = current
 
-    def _len_(self) -> int:
-        return self.size # since the list is static, the length would be the size specified by the user
-    
+    def _len_(self):
+        # since the list is static, the length would be the size specified by the user
+        return self.size
+
     def _getitem_(self, i: int):
         current = self.head
         if i > self.size:
@@ -164,7 +162,7 @@ class PointerList(MyList):
                     return current.value
                 else:
                     current = current.next
-                    current.prev = current
+        return None
 
     def _setitem_(self, i: int, value) -> None:
         current = self.head
@@ -176,34 +174,105 @@ class PointerList(MyList):
                     current.value = value
                 else:
                     current = current.next
-                    current.prev = current
 
 
+# class ArrayList(MyList):
+
+#     def __init__(self, size, value=None):
+#         MyList.__init__(self, size, value)
+
+#         self.r = arr.array('i', [])
+#         self.g = arr.array('i', [])
+#         self.b = arr.array('i', [])
+
+#         for i in range(self.size):
+#             self.r.extend(value)
+#             self.g.extend(value)
+#             self.b.extend(value)
+
+#     def __getitem__(self, i: int):
+#         assert 0 <= i < len(self),\
+#             f'Getting invalid list index {i} from list of size {len(self)}'
+#         return (self.r[i], self.g[i], self.b[i])
+
+#     def __setitem__(self, i: int, value) -> None:
+#         assert 0 <= i < len(self),\
+#             f'Setting invalid list index {i} in list of size {self.size()}'
+#         self.r[i] = value[0]
+#         self.g[i] = value[1]
+#         self.b[i] = value[2]
+
+#     def __len__(self):
+#         return len(self.r)
+# class ArrayList(MyList):
+
+#     def __init__(self, size, value=None):
+#         MyList.__init__(self, size, value)
+
+#         self.rgb = arr.array('I', [])
+
+#         for i in range(self.size):
+#             for j in range(3):
+#                 if value[j] < 10:
+#                     temp = "0"+"0"+str(value[j])
+#                     self.rgb.append(int(temp))
+#                 elif value[j] < 100:
+#                     temp = '0'+str(value[j])
+#                     self.rgb.append(int(temp))
+#                 elif value[j] < 1000:
+#                     self.rgb.append(int(str(value[j])))
+
+#     def __getitem__(self, i: int):
+
+#         assert 0 <= i < len(self),\
+#             f'Getting invalid list index {i} from list of size {len(self)}'
+
+#         temp = str(self.rgb[i])
+#         while len(temp) <= 9:
+#             temp = "0" + temp
+
+#         return (int(temp[0:3]), int(temp[3:6]), int(temp[6:9]))
+
+#     def __setitem__(self, i: int, value) -> None:
+
+#         assert 0 <= i < len(self),\
+#             f'Setting invalid list index {i} in list of size {self.size()}'
+
+#         a = str(value[0])
+#         while len(a) <= 3:
+#             a = "0" + a
+#         b = str(value[1])
+#         while len(b) <= 3:
+#             b = "0" + b
+#         c = str(value[2])
+#         while len(c) <= 3:
+#             c = "0" + c
+
+#         self.rgb[i] = int(a + b + c)
+
+#     def __len__(self):
+#         return len(self.rgb)
 class ArrayList(MyList):
 
-    def __init__(self, size, values=None):
-        MyList.__init__(self, size, values)
+    def __init__(self, size, value=None):
+        MyList.__init__(self, size, value)
 
-        # self.r = arr.array('i', [self.value for i in range(self.size)]) this works i checked it but idk
-        # self.g = arr.array('i', [self.value for i in range(self.size)])
-        # self.b = arr.array ('i', [self.value for i in range(self.size)])
+        self.rgb = arr.array('i', [])
 
-        temp = [self.value for i in range(self.size)]
-
-        self.r = arr.array('i', [])
-        self.r.extend(temp)
-        self.g = arr.array('i', [])
-        self.g.extend(temp)
-        self.b = arr.array('i', [])
-        self.b.extend(temp)
+        if value is not None:
+            for i in range(int(self.size)):
+                self.rgb.extend([value[0], value[1], value[2]])
+        else:
+            for i in range(int(self.size)):
+                self.rgb.extend([0, 0, 0])
 
     def __getitem__(self, i: int):
-        return (self.r[i], self.g[i], self.b[i])
+        return (self.rgb[i*3], self.rgb[(i*3)+1], self.rgb[(i*3)+2])
 
     def __setitem__(self, i: int, value) -> None:
-        self.r[i] = value[0]
-        self.g[i] = value[1]
-        self.b[i] = value[2]
+        self.rgb[(i*3)] = value[0]
+        self.rgb[(i*3)+1] = value[1]
+        self.rgb[(i*3)+2] = value[2]
 
     def __len__(self):
-        return len(self.r)
+        return self.size
