@@ -1,5 +1,4 @@
 from src.image_operations import *
-from src.myimage import *
 from PIL import Image
 from urllib.request import urlopen
 
