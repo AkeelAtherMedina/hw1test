@@ -3,7 +3,7 @@ from mylist import *
 import PIL
 
 
-class MyImage:
+class myimage:
     """ Holds a flattened RGB image and its dimensions.
     """
 
